@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Business services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
