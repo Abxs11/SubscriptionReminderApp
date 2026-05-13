@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionReminder.Api.Services.Interfaces;
 
@@ -5,6 +6,7 @@ namespace SubscriptionReminder.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DebtInquiriesController : ControllerBase
 {
     private readonly IDebtInquiryService _debtInquiryService;

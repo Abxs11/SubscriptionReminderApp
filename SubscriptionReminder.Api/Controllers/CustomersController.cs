@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionReminder.Api.DTOs.Customer;
 using SubscriptionReminder.Api.Services.Interfaces;
@@ -6,6 +7,7 @@ namespace SubscriptionReminder.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = "Admin")]
 public class CustomersController : ControllerBase
 {
     private readonly ICustomerService _customerService;
