@@ -1,16 +1,24 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Subscriptions from './pages/Subscriptions';
+import Reminders from './pages/Reminders';
+import Profile from './pages/Profile';
+import Admin from './pages/Admin';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        
-        {/* Mock pages for now */}
-        <Route path="/dashboard" element={<div style={{padding: '40px'}}><h1>Customer Dashboard</h1><p>Geliştirme aşamasında...</p></div>} />
-        <Route path="/admin" element={<div style={{padding: '40px'}}><h1>Admin Panel</h1><p>Geliştirme aşamasında...</p></div>} />
-        
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/subscriptions" element={<Subscriptions />} />
+        <Route path="/reminders" element={<Reminders />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
+
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>

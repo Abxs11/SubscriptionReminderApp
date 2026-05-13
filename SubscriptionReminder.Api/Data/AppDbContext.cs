@@ -11,9 +11,10 @@ public class AppDbContext : DbContext
 
     public DbSet<Customer> Customers { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
-    public DbSet<Subscription> Subscriptions { get; set; } = null!;
-    public DbSet<Payment> Payments { get; set; } = null!;
-    public DbSet<DebtInquiry> DebtInquiries { get; set; } = null!;
+    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<Payment> Payments { get; set; }
+    public DbSet<DebtInquiry> DebtInquiries { get; set; }
+    public DbSet<ReminderLog> ReminderLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import './Login.css';
 import { LogIn, Mail, Lock, ShieldCheck } from 'lucide-react';
@@ -20,9 +20,10 @@ const Login: React.FC = () => {
       const response = await api.post('/Auth/login', { email, password });
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data));
-      
+
       // Redirect based on role
-      if (response.data.role === 'Admin') {
+      const userRole = response.data.role;
+      if (userRole === 'Admin') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
@@ -42,7 +43,7 @@ const Login: React.FC = () => {
           <p>Ödemelerinizi unutmayın, kontrolü elinizde tutun.</p>
         </div>
       </div>
-      
+
       <div className="login-form-side">
         <div className="login-card animate-fade-in">
           <div className="card-header">
@@ -58,9 +59,9 @@ const Login: React.FC = () => {
               <label>Email Adresi</label>
               <div className="input-wrapper">
                 <Mail size={20} className="icon" />
-                <input 
-                  type="email" 
-                  value={email} 
+                <input
+                  type="email"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@subscription.com"
                   required
@@ -72,9 +73,9 @@ const Login: React.FC = () => {
               <label>Şifre</label>
               <div className="input-wrapper">
                 <Lock size={20} className="icon" />
-                <input 
-                  type="password" 
-                  value={password} 
+                <input
+                  type="password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
@@ -94,8 +95,8 @@ const Login: React.FC = () => {
             </button>
           </form>
 
-          <div className="card-footer">
-            <p>Hesabınız yok mu? <span className="link">Kayıt Ol</span></p>
+          <div className="login-footer">
+            Hesabın yok mu? <Link to="/register">Hemen Kayıt Ol</Link>
           </div>
         </div>
       </div>

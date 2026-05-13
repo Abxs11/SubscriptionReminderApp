@@ -123,11 +123,20 @@
   transition: all 0.2s;
 }
 
-.input-wrapper input:focus {
+.input-group input:focus {
   outline: none;
   border-color: var(--primary-color);
-  background: rgba(15, 23, 42, 0.8);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  background: rgba(139, 92, 246, 0.05);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
+.input-row {
+  display: flex;
+  gap: 16px;
+}
+
+.input-row .input-group {
+  flex: 1;
 }
 
 .login-button {

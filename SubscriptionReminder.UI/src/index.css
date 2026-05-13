@@ -4,18 +4,20 @@
   font-weight: 400;
 
   color-scheme: dark;
-  --primary-color: #6366f1;
-  --primary-hover: #4f46e5;
-  --bg-color: #0f172a;
-  --card-bg: #1e293b;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --primary-color: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --bg-color: #030712;
+  --card-bg: #111827;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
   --accent-color: #10b981;
+  --accent-soft: rgba(16, 185, 129, 0.1);
   --error-color: #ef4444;
-  --border-color: #334155;
+  --warning-color: #f59e0b;
+  --border-color: #1f2937;
   
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(17, 24, 39, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.05);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
