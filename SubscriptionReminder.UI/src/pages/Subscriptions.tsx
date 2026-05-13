@@ -13,12 +13,18 @@ import {
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import AddSubscriptionModal from '../components/AddSubscriptionModal';
+import EditSubscriptionModal from '../components/EditSubscriptionModal';
+import PeriodInquiryModal from '../components/PeriodInquiryModal';
+import { Edit2, FileSearch } from 'lucide-react';
 
 const Subscriptions: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
+  const [selectedSub, setSelectedSub] = useState<any>(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
@@ -98,9 +104,17 @@ const Subscriptions: React.FC = () => {
                   <p>{sub.subscriberNumber}</p>
                   <span className={`badge type-${sub.type.toLowerCase()}`}>{sub.type}</span>
                 </div>
-                <button className="delete-action" onClick={() => handleDelete(sub.id)}>
-                  <Trash2 size={18} />
-                </button>
+                <div className="card-actions">
+                  <button className="inquiry-action" title="Dönem Borcu Sorgula" onClick={() => { setSelectedSub(sub); setIsInquiryModalOpen(true); }}>
+                    <FileSearch size={18} />
+                  </button>
+                  <button className="edit-action" title="Düzenle" onClick={() => { setSelectedSub(sub); setIsEditModalOpen(true); }}>
+                    <Edit2 size={18} />
+                  </button>
+                  <button className="delete-action" title="Sil" onClick={() => handleDelete(sub.id)}>
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               </div>
             ))}
             
@@ -118,6 +132,19 @@ const Subscriptions: React.FC = () => {
         onClose={() => setIsModalOpen(false)} 
         onSuccess={fetchSubscriptions} 
         customerId={user.customerId} 
+      />
+
+      <EditSubscriptionModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={fetchSubscriptions}
+        subscription={selectedSub}
+      />
+
+      <PeriodInquiryModal
+        isOpen={isInquiryModalOpen}
+        onClose={() => setIsInquiryModalOpen(false)}
+        subscription={selectedSub}
       />
     </div>
   );

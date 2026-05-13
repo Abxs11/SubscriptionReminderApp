@@ -26,6 +26,16 @@ public class PaymentsController : ControllerBase
         try
         {
             var payment = await _paymentService.CreateAsync(request);
+            
+            if (payment.Status == "Failed")
+            {
+                return BadRequest(new { 
+                    message = "Ödeme işlemi banka tarafından reddedildi.", 
+                    reason = payment.FailureReason,
+                    paymentId = payment.Id 
+                });
+            }
+
             return CreatedAtAction(nameof(GetById), new { id = payment.Id }, payment);
         }
         catch (KeyNotFoundException ex)

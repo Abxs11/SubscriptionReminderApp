@@ -6,6 +6,7 @@ import Subscriptions from './pages/Subscriptions';
 import Reminders from './pages/Reminders';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import Payments from './pages/Payments';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/subscriptions" element={<Subscriptions />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/payments" element={<Payments />} />
         <Route path="/admin" element={<Admin />} />
 
         <Route path="/" element={<Navigate to="/login" replace />} />

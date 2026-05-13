@@ -45,6 +45,7 @@ public class PaymentService : IPaymentService
             Amount = request.Amount,
             PaymentDateUtc = DateTime.UtcNow,
             Period = request.Period,
+            DueDate = request.DueDate,
             Status = externalResult.IsSuccess ? "Success" : "Failed",
             ExternalTransactionId = externalResult.TransactionId,
             FailureReason = externalResult.FailureReason
@@ -82,9 +83,12 @@ public class PaymentService : IPaymentService
         {
             Id = payment.Id,
             SubscriptionId = payment.SubscriptionId,
+            ProviderName = payment.Subscription?.ProviderName ?? string.Empty,
+            SubscriberNumber = payment.Subscription?.SubscriberNumber ?? string.Empty,
             Amount = payment.Amount,
             PaymentDateUtc = payment.PaymentDateUtc,
             Period = payment.Period,
+            DueDate = payment.DueDate,
             Status = payment.Status,
             ExternalTransactionId = payment.ExternalTransactionId,
             FailureReason = payment.FailureReason

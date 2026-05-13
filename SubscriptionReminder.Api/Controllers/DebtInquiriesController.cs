@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SubscriptionReminder.Api.DTOs.DebtInquiry;
 using SubscriptionReminder.Api.Services.Interfaces;
 
 namespace SubscriptionReminder.Api.Controllers;
@@ -16,16 +17,12 @@ public class DebtInquiriesController : ControllerBase
         _debtInquiryService = debtInquiryService;
     }
 
-    /// <summary>
-    /// Abonelik için borç sorgulama yapar (mock üçüncü parti servis).
-    /// </summary>
-    [HttpPost("{subscriptionId}/query")]
-    public async Task<IActionResult> Query(int subscriptionId)
+    [HttpPost("{id}/query")]
+    public async Task<ActionResult<DebtInquiryDto>> Query(int id)
     {
         try
         {
-            var result = await _debtInquiryService.QueryAsync(subscriptionId);
-            return Ok(result);
+            return Ok(await _debtInquiryService.QueryAsync(id));
         }
         catch (KeyNotFoundException ex)
         {
@@ -37,11 +34,25 @@ public class DebtInquiriesController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Aboneliğe ait borç sorgulama geçmişini listeler.
-    /// </summary>
+    [HttpGet("{id}/status/{period}")]
+    public async Task<ActionResult<DebtStatusDto>> GetStatus(int id, string period)
+    {
+        try
+        {
+            return Ok(await _debtInquiryService.GetStatusForPeriodAsync(id, period));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpGet("subscription/{subscriptionId}")]
-    public async Task<IActionResult> GetBySubscriptionId(int subscriptionId)
+    public async Task<ActionResult<List<DebtInquiryDto>>> GetBySubscriptionId(int subscriptionId)
     {
         var inquiries = await _debtInquiryService.GetBySubscriptionIdAsync(subscriptionId);
         return Ok(inquiries);

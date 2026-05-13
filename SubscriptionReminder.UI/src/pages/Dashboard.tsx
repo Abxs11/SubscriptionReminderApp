@@ -67,11 +67,11 @@ const Dashboard: React.FC = () => {
 
       {/* Main Content */}
       <main className="main-content">
-        <header className="content-header">
-          <div className="header-search">
-            <Search size={18} />
-            <input type="text" placeholder="Abonelik ara..." />
-          </div>
+        <header className="content-header-premium">
+          <h1>
+            <TrendingUp size={24} color="var(--primary-color)" />
+            Genel Bakış
+          </h1>
           <div className="user-profile">
             <div className="user-info">
               <span className="user-name">{user?.email.split('@')[0]}</span>
@@ -154,13 +154,15 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="data-section">
-              <div className="section-header">
-                <h2>Son Ödemeler</h2>
-              </div>
+              <div className="section-header" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+              <h3>Son Ödemeler</h3>
+              <button onClick={() => navigate('/payments')} className="view-all-btn">Tümünü Gör</button>
+            </div>
               <div className="data-table-wrapper">
                 <table className="data-table">
                   <thead>
                     <tr>
+                      <th>Abonelik</th>
                       <th>Dönem</th>
                       <th>Tutar</th>
                       <th>Tarih</th>
@@ -170,6 +172,12 @@ const Dashboard: React.FC = () => {
                   <tbody>
                     {summary?.recentPayments.map((pay: any) => (
                       <tr key={pay.id}>
+                        <td>
+                          <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <strong>{pay.providerName}</strong>
+                            <small style={{fontSize: '0.7rem', color: 'var(--text-secondary)'}}>{pay.subscriberNumber}</small>
+                          </div>
+                        </td>
                         <td>{pay.period}</td>
                         <td>₺{pay.amount}</td>
                         <td>{new Date(pay.paymentDateUtc).toLocaleDateString('tr-TR')}</td>

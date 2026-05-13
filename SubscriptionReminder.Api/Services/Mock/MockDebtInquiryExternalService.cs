@@ -9,10 +9,10 @@ namespace SubscriptionReminder.Api.Services.Mock;
 /// </summary>
 public class MockDebtInquiryExternalService : IDebtInquiryExternalService
 {
-    public Task<DebtInquiryResult> QueryDebtAsync(string subscriberNumber, string subscriptionType, string providerName)
+    public Task<DebtInquiryResult> QueryDebtAsync(string subscriberNumber, string subscriptionType, string providerName, string? period = null)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var currentPeriod = $"{today.Year}-{today.Month:D2}";
+        var currentPeriod = period ?? today.ToString("yyyy-MM");
 
         // Aynı abone + aynı dönem için her zaman aynı sonucu üretmek adına
         // deterministik bir seed kullanıyoruz.
@@ -31,7 +31,11 @@ public class MockDebtInquiryExternalService : IDebtInquiryExternalService
         };
 
         var amount = Math.Round(minAmount + (decimal)random.NextDouble() * (maxAmount - minAmount), 2);
-        var dueDate = today.AddDays(random.Next(5, 20));
+        
+        // Dönem bilgisinden (yyyy-MM) bir sonraki ayı hesapla
+        var periodDate = DateTime.ParseExact(currentPeriod + "-01", "yyyy-MM-dd", null);
+        var nextMonth = periodDate.AddMonths(1);
+        var dueDate = new DateOnly(nextMonth.Year, nextMonth.Month, random.Next(1, 11));
 
         var result = new DebtInquiryResult
         {

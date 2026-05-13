@@ -22,7 +22,7 @@ public class SummariesController : ControllerBase
         var customerIdClaim = User.FindFirst("CustomerId")?.Value;
         if (string.IsNullOrEmpty(customerIdClaim))
             throw new UnauthorizedAccessException("Customer ID not found in token.");
-        
+
         return int.Parse(customerIdClaim);
     }
 

@@ -9,7 +9,7 @@ public interface IDebtInquiryExternalService
     /// <summary>
     /// Abonelik bilgilerine göre mock borç bilgisi döndürür.
     /// </summary>
-    Task<DebtInquiryResult> QueryDebtAsync(string subscriberNumber, string subscriptionType, string providerName);
+    Task<DebtInquiryResult> QueryDebtAsync(string subscriberNumber, string subscriptionType, string providerName, string? period = null);
 }
 
 public class DebtInquiryResult

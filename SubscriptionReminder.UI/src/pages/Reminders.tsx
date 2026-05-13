@@ -11,10 +11,9 @@ import {
 import Sidebar from '../components/Sidebar';
 
 const Reminders: React.FC = () => {
-  const [unpaid, setUnpaid] = useState<any[]>([]);
-  const [debts, setDebts] = useState<{[key: number]: number}>({});
+  const [unpaidItems, setUnpaidItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [payingId, setPayingId] = useState<number | null>(null);
+  const [payingId, setPayingId] = useState<string | null>(null); // subscriptionId-period combinations
 
   useEffect(() => {
     fetchUnpaid();
@@ -24,21 +23,7 @@ const Reminders: React.FC = () => {
     setLoading(true);
     try {
       const response = await api.get('/Summaries/unpaid');
-      const data = response.data;
-      setUnpaid(data);
-      
-      // Her bir abonelik için borç sorgula
-      const debtMap: {[key: number]: number} = {};
-      for (const sub of data) {
-        try {
-          const inquiryRes = await api.post(`/DebtInquiries/${sub.id}/query`);
-          debtMap[sub.id] = inquiryRes.data.amount;
-        } catch (err) {
-          console.error(`Borç sorgulanamadı (ID: ${sub.id}):`, err);
-          debtMap[sub.id] = 0;
-        }
-      }
-      setDebts(debtMap);
+      setUnpaidItems(response.data);
     } catch (error) {
       console.error('Ödenmemiş abonelikler yüklenemedi:', error);
     } finally {
@@ -46,28 +31,24 @@ const Reminders: React.FC = () => {
     }
   };
 
-  const handlePay = async (sub: any) => {
-    const amount = debts[sub.id];
-    if (!amount || amount <= 0) {
-      alert('Bu abonelik için ödenecek borç bulunamadı.');
-      return;
-    }
-
-    setPayingId(sub.id);
-    const currentPeriod = new Date().toISOString().slice(0, 7); // yyyy-MM
+  const handlePay = async (item: any) => {
+    const uniqueKey = `${item.id}-${item.period}`;
+    setPayingId(uniqueKey);
     
     try {
       // Ödeme yap (Mock)
       await api.post('/Payments', {
-        subscriptionId: sub.id,
-        amount: amount,
-        period: currentPeriod
+        subscriptionId: item.id,
+        amount: item.amount,
+        period: item.period,
+        dueDate: item.dueDate
       });
 
-      alert(`₺${amount} tutarındaki ödeme başarıyla gerçekleştirildi!`);
+      alert(`${item.period} dönemine ait ₺${item.amount} tutarındaki ödeme başarıyla gerçekleştirildi!`);
       fetchUnpaid(); // Listeyi yenile
-    } catch (error) {
-      alert('Ödeme sırasında bir hata oluştu.');
+    } catch (error: any) {
+      const msg = error.response?.data?.message || 'Ödeme sırasında bir hata oluştu.';
+      alert(msg);
     } finally {
       setPayingId(null);
     }
@@ -87,45 +68,57 @@ const Reminders: React.FC = () => {
         <section className="page-content animate-fade-in">
           <div className="welcome-banner">
             <h1>Ödeme Zamanı! 💸</h1>
-            <p>Bu ay henüz ödemesi yapılmamış {unpaid.length} aboneliğiniz bulunuyor.</p>
+            <p>Şu an ödenmesi gereken toplam {unpaidItems.length} borç kaleminiz bulunuyor.</p>
           </div>
-
+ 
           <div className="reminders-list">
-            {unpaid.map(sub => (
-              <div className="reminder-item" key={sub.id}>
-                <div className="reminder-main">
-                  <div className={`reminder-icon type-${sub.type.toLowerCase()}`}>
-                    <Calendar size={24} />
-                  </div>
-                  <div className="reminder-info">
-                    <h3>{sub.providerName}</h3>
-                    <p>{sub.subscriberNumber} • {sub.type}</p>
-                    <div className="debt-badge">
-                      Borç: <span>₺{debts[sub.id] !== undefined ? debts[sub.id].toLocaleString('tr-TR') : '...'}</span>
+            {unpaidItems.map(item => {
+              const uniqueKey = `${item.id}-${item.period}`;
+              return (
+                <div className="reminder-item" key={uniqueKey}>
+                  <div className="reminder-main">
+                    <div className={`reminder-icon type-${item.type.toLowerCase()}`}>
+                      <Calendar size={24} />
+                    </div>
+                    <div className="reminder-info">
+                      <h3>{item.providerName}</h3>
+                      <p>{item.subscriberNumber} • {item.type}</p>
+                      <div className="debt-info-row">
+                        <div className="debt-period-tag">
+                          {item.period} Dönemi
+                        </div>
+                        <div className="debt-badge">
+                          Borç: <span>₺{item.amount.toLocaleString('tr-TR')}</span>
+                        </div>
+                        <div className="due-date-info">
+                          <Calendar size={14} />
+                          <span>Son Ödeme: {new Date(item.dueDate).toLocaleDateString('tr-TR')}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="reminder-status">
-                  <div className="status-tag unpaid">
-                    <AlertCircle size={16} /> Ödenmedi
+                  
+                  <div className="reminder-status">
+                    <div className="status-tag unpaid">
+                      <AlertCircle size={16} /> Ödenmedi
+                    </div>
+                    <button 
+                      className="pay-btn" 
+                      onClick={() => handlePay(item)}
+                      disabled={payingId === uniqueKey}
+                    >
+                      {payingId === uniqueKey ? 'Ödeniyor...' : (
+                        <>
+                          <CreditCard size={18} /> Öde (₺{item.amount.toLocaleString('tr-TR')})
+                        </>
+                      )}
+                    </button>
                   </div>
-                  <button 
-                    className="pay-btn" 
-                    onClick={() => handlePay(sub)}
-                    disabled={payingId === sub.id || debts[sub.id] === undefined}
-                  >
-                    {payingId === sub.id ? 'Ödeniyor...' : (
-                      <>
-                        <CreditCard size={18} /> Öde (₺{debts[sub.id]?.toLocaleString('tr-TR')})
-                      </>
-                    )}
-                  </button>
                 </div>
-              </div>
-            ))}
-
-            {unpaid.length === 0 && !loading && (
+              );
+            })}
+ 
+            {unpaidItems.length === 0 && !loading && (
               <div className="all-paid-state">
                 <CheckCircle2 size={64} color="#10b981" />
                 <h2>Harika! Tüm ödemeler tamam.</h2>

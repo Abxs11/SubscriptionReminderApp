@@ -7,6 +7,7 @@ public class Payment
     public decimal Amount { get; set; }
     public DateTime PaymentDateUtc { get; set; } = DateTime.UtcNow;
     public string Period { get; set; } = string.Empty; // e.g. "2026-05"
+    public DateOnly DueDate { get; set; }
     public string Status { get; set; } = string.Empty; // Success, Failed
     public string? ExternalTransactionId { get; set; }
     public string? FailureReason { get; set; }

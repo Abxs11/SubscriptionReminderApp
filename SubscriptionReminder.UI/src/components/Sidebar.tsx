@@ -1,16 +1,18 @@
-import React from 'react';
 import {
   CreditCard,
   Bell,
   User as UserIcon,
   TrendingUp,
   LogOut,
-  Shield
+  Shield,
+  Trash2,
+  Wallet
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 interface SidebarProps {
-  activePage: 'dashboard' | 'subscriptions' | 'reminders' | 'profile' | 'admin';
+  activePage: 'dashboard' | 'subscriptions' | 'reminders' | 'profile' | 'admin' | 'payments';
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ activePage }) => {
@@ -22,6 +24,19 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/login');
+  };
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm('Hesabınızı silmek istediğinizden emin misiniz? Tüm abonelikleriniz ve verileriniz kalıcı olarak silinecektir!')) {
+      try {
+        await api.delete('/Customers/me');
+        alert('Hesabınız başarıyla silindi.');
+        handleLogout();
+      } catch (error) {
+        console.error('Hesap silme hatası:', error);
+        alert('Hesap silinirken bir hata oluştu.');
+      }
+    }
   };
 
   return (
@@ -62,6 +77,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage }) => {
             >
               <Bell size={22} /> <span>Hatırlatıcılar</span>
             </div>
+            <div
+              className={`nav-item ${activePage === 'payments' ? 'active' : ''}`}
+              onClick={() => navigate('/payments')}
+            >
+              <Wallet size={22} /> <span>Ödeme Geçmişi</span>
+            </div>
           </>
         )}
 
@@ -74,6 +95,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage }) => {
       </nav>
 
       <div className="sidebar-footer">
+        {!isAdmin && (
+          <button onClick={handleDeleteAccount} className="delete-account-btn">
+            <Trash2 size={18} />
+            <span>Hesabımı Sil</span>
+          </button>
+        )}
         <button onClick={handleLogout} className="premium-logout-btn">
           <div className="btn-content">
             <LogOut size={20} />

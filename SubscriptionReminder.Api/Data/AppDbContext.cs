@@ -102,5 +102,19 @@ public class AppDbContext : DbContext
                 .HasForeignKey(d => d.SubscriptionId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+        // ReminderLog
+        modelBuilder.Entity<ReminderLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Period).HasMaxLength(7).IsFixedLength().IsRequired();
+            entity.Property(e => e.Status).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Message).HasMaxLength(500);
+
+            entity.HasOne(d => d.Subscription)
+                .WithMany()
+                .HasForeignKey(d => d.SubscriptionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }

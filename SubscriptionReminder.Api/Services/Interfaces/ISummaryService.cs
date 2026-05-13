@@ -7,6 +7,6 @@ namespace SubscriptionReminder.Api.Services.Interfaces;
 public interface ISummaryService
 {
     Task<DashboardSummaryDto> GetDashboardSummaryAsync(int customerId);
-    Task<List<SubscriptionDto>> GetUnpaidSubscriptionsAsync(int customerId);
+    Task<List<UnpaidSubscriptionDto>> GetUnpaidSubscriptionsAsync(int customerId);
     Task<List<PaymentDto>> GetPaymentHistoryAsync(int customerId);
 }

@@ -22,11 +22,37 @@ public class DebtInquiryService : IDebtInquiryService
         if (subscription == null)
             throw new KeyNotFoundException($"ID {subscriptionId} ile abonelik bulunamadı.");
 
+        // Abonelik başlangıcından bugüne kadar olan ödenmemiş en eski ayı bul
+        var startMonth = new DateTime(subscription.CreatedAtUtc.Year, subscription.CreatedAtUtc.Month, 1);
+        var currentMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+
+        var paidPeriods = await _context.Payments
+            .Where(p => p.SubscriptionId == subscriptionId && p.Status == "Success")
+            .Select(p => p.Period)
+            .ToListAsync();
+
+        string? targetPeriod = null;
+        var tempMonth = startMonth;
+        while (tempMonth <= currentMonth)
+        {
+            var periodStr = tempMonth.ToString("yyyy-MM");
+            if (!paidPeriods.Contains(periodStr))
+            {
+                targetPeriod = periodStr;
+                break;
+            }
+            tempMonth = tempMonth.AddMonths(1);
+        }
+
+        if (targetPeriod == null)
+            throw new InvalidOperationException("Bu abonelik için ödenmemiş borç bulunamadı.");
+
         // Mock dış servisten borç sorgula
         var result = await _externalService.QueryDebtAsync(
             subscription.SubscriberNumber,
             subscription.Type,
-            subscription.ProviderName);
+            subscription.ProviderName,
+            targetPeriod);
 
         if (!result.HasDebt)
             throw new InvalidOperationException("Bu abonelik için borç bulunamadı.");
@@ -46,6 +72,33 @@ public class DebtInquiryService : IDebtInquiryService
         await _context.SaveChangesAsync();
 
         return MapToDto(inquiry);
+    }
+
+    public async Task<DebtStatusDto> GetStatusForPeriodAsync(int subscriptionId, string period)
+    {
+        var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
+        if (subscription == null)
+            throw new KeyNotFoundException("Abonelik bulunamadı.");
+
+        // Ödeme kontrolü
+        var payment = await _context.Payments
+            .FirstOrDefaultAsync(p => p.SubscriptionId == subscriptionId && p.Period == period && p.Status == "Success");
+
+        // Mock servisten borç bilgisini al
+        var debtResult = await _externalService.QueryDebtAsync(
+            subscription.SubscriberNumber,
+            subscription.Type,
+            subscription.ProviderName,
+            period);
+
+        return new DebtStatusDto
+        {
+            IsPaid = payment != null,
+            Amount = debtResult.Amount,
+            DueDate = debtResult.DueDate,
+            Period = period,
+            PaymentDate = payment?.PaymentDateUtc
+        };
     }
 
     public async Task<List<DebtInquiryDto>> GetBySubscriptionIdAsync(int subscriptionId)

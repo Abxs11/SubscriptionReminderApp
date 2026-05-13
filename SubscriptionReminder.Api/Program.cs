@@ -8,7 +8,7 @@ using SubscriptionReminder.Api.Services;
 using SubscriptionReminder.Api.Services.Interfaces;
 using SubscriptionReminder.Api.Services.Mock;
 using SubscriptionReminder.Api.BackgroundServices;
-using SubscriptionReminder.Api.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +55,7 @@ builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IDebtInquiryService, DebtInquiryService>();
 builder.Services.AddScoped<ISummaryService, SummaryService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddHostedService<ReminderBackgroundService>();
 
