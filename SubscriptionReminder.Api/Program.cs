@@ -41,6 +41,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IDebtInquiryService, DebtInquiryService>();
+builder.Services.AddScoped<ISummaryService, SummaryService>();
 
 // Mock external services (üçüncü parti servisler)
 builder.Services.AddScoped<IPaymentExternalService, MockPaymentExternalService>();
@@ -90,5 +91,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Seed initial data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    await DbSeeder.SeedAsync(context);
+}
 
 app.Run();
