@@ -59,6 +59,14 @@ const PeriodInquiryModal: React.FC<PeriodInquiryModalProps> = ({ isOpen, onClose
     if (!status) return;
     setIsPaying(true);
     try {
+      // Kart kontrolü (PCI-DSS senaryosu)
+      const cardsResponse = await api.get('/SavedCards');
+      if (cardsResponse.data.length === 0) {
+        alert('Sistemde kayıtlı ödeme yönteminiz bulunmuyor. Lütfen önce "Kayıtlı Kartlarım" sayfasından bir kart ekleyin.');
+        setIsPaying(false);
+        return;
+      }
+
       await api.post('/Payments', {
         subscriptionId: subscription.id,
         amount: status.amount,

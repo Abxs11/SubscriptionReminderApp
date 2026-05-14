@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 interface SidebarProps {
-  activePage: 'dashboard' | 'subscriptions' | 'reminders' | 'profile' | 'admin' | 'payments';
+  activePage: 'dashboard' | 'subscriptions' | 'reminders' | 'profile' | 'admin' | 'payments' | 'saved-cards';
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ activePage }) => {
@@ -82,6 +82,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage }) => {
               onClick={() => navigate('/payments')}
             >
               <Wallet size={22} /> <span>Ödeme Geçmişi</span>
+            </div>
+            <div
+              className={`nav-item ${activePage === 'saved-cards' ? 'active' : ''}`}
+              onClick={() => navigate('/saved-cards')}
+            >
+              <Shield size={22} /> <span>Kayıtlı Kartlarım</span>
             </div>
           </>
         )}

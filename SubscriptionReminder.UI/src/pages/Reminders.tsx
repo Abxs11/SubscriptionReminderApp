@@ -36,6 +36,14 @@ const Reminders: React.FC = () => {
     setPayingId(uniqueKey);
     
     try {
+      // Kart kontrolü
+      const cardsResponse = await api.get('/SavedCards');
+      if (cardsResponse.data.length === 0) {
+        alert('Sistemde kayıtlı ödeme yönteminiz bulunmuyor. Lütfen önce "Kayıtlı Kartlarım" sayfasından bir kart ekleyin.');
+        setPayingId(null);
+        return;
+      }
+
       // Ödeme yap (Mock)
       await api.post('/Payments', {
         subscriptionId: item.id,

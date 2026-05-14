@@ -56,6 +56,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IDebtInquiryService, DebtInquiryService>();
 builder.Services.AddScoped<ISummaryService, SummaryService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ISavedCardService, SavedCardService>();
 
 builder.Services.AddHostedService<ReminderBackgroundService>();
 

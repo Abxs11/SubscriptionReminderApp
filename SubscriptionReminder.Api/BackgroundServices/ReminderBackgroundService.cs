@@ -76,16 +76,16 @@ public class ReminderBackgroundService : BackgroundService
                     {
                         // Borç bilgisini sorgula (Mock)
                         var debt = await externalService.QueryDebtAsync(sub.SubscriberNumber, sub.Type, sub.ProviderName, periodStr);
-                        
+
                         // Son ödeme tarihine 10 günden fazla varsa mail atma
                         var dueDate = debt.DueDate.ToDateTime(TimeOnly.MinValue);
                         var daysUntilDue = (dueDate - DateTime.UtcNow.Date).TotalDays;
 
-                        if (daysUntilDue > 10)
-                        {
-                            _logger.LogInformation("Hatırlatma atlanıyor, son ödeme tarihine {Days} gün var: {Provider}", (int)daysUntilDue, sub.ProviderName);
-                            continue;
-                        }
+                        //if (daysUntilDue > 10)
+                        //{
+                        //    _logger.LogInformation("Hatırlatma atlanıyor, son ödeme tarihine {Days} gün var: {Provider}", (int)daysUntilDue, sub.ProviderName);
+                        //    continue;
+                        //}
 
                         var customerName = $"{sub.Customer.FirstName} {sub.Customer.LastName}";
 
@@ -108,9 +108,9 @@ public class ReminderBackgroundService : BackgroundService
                         await emailService.SendEmailAsync(sub.Customer.Email, $"{sub.ProviderName} - Ödeme Hatırlatması", mailBody);
 
                         // Hatırlatmayı gönder (Simüle et logger'da kalsın)
-                        _logger.LogInformation("HATIRLATMA GÖNDERİLDİ: {Customer}, {Provider} ({Period})", 
-                            customerName, 
-                            sub.ProviderName, 
+                        _logger.LogInformation("HATIRLATMA GÖNDERİLDİ: {Customer}, {Provider} ({Period})",
+                            customerName,
+                            sub.ProviderName,
                             periodStr);
 
                         // Günlüğe kaydet

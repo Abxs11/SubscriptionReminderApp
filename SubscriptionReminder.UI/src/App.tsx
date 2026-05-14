@@ -7,6 +7,7 @@ import Reminders from './pages/Reminders';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import Payments from './pages/Payments';
+import SavedCards from './pages/SavedCards';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/payments" element={<Payments />} />
+        <Route path="/saved-cards" element={<SavedCards />} />
         <Route path="/admin" element={<Admin />} />
 
         <Route path="/" element={<Navigate to="/login" replace />} />

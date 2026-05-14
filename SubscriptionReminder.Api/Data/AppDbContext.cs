@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<DebtInquiry> DebtInquiries { get; set; }
     public DbSet<ReminderLog> ReminderLogs { get; set; }
+    public DbSet<SavedCard> SavedCards { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -114,6 +115,20 @@ public class AppDbContext : DbContext
             entity.HasOne(d => d.Subscription)
                 .WithMany()
                 .HasForeignKey(d => d.SubscriptionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // SavedCard
+        modelBuilder.Entity<SavedCard>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CardHolderName).HasMaxLength(150).IsRequired();
+            entity.Property(e => e.MaskedCardNumber).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.ExpiryDate).HasMaxLength(5).IsRequired();
+
+            entity.HasOne(d => d.Customer)
+                .WithMany(p => p.SavedCards)
+                .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

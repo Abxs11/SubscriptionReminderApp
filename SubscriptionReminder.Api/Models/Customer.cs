@@ -12,4 +12,5 @@ public class Customer
 
     public User? User { get; set; }
     public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+    public ICollection<SavedCard> SavedCards { get; set; } = new List<SavedCard>();
 }

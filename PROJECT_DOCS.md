@@ -12,6 +12,7 @@ Sistem; müşteriler, kullanıcılar, abonelikler ve bu aboneliklere bağlı öd
 erDiagram
     CUSTOMER ||--|| USER : "has account"
     CUSTOMER ||--o{ SUBSCRIPTION : "owns"
+    CUSTOMER ||--o{ SAVED_CARD : "saves"
     SUBSCRIPTION ||--o{ PAYMENT : "has"
     SUBSCRIPTION ||--o{ DEBT_INQUIRY : "has queries"
     SUBSCRIPTION ||--o{ REMINDER_LOG : "has notifications"
@@ -23,6 +24,15 @@ erDiagram
         string Tckn UK
         string Email UK
         string PhoneNumber
+    }
+
+    SAVED_CARD {
+        int Id PK
+        int CustomerId FK
+        string CardHolderName
+        string MaskedCardNumber
+        string ExpiryDate
+        datetime CreatedAtUtc
     }
 
     USER {
